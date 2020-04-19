@@ -5,6 +5,7 @@ from settings import *
 from pygame import locals as const
 from game import Game
 from dungeon import Dungeon
+from sprites import *
 
 class Main(object):
     """docstring for Main."""
@@ -15,6 +16,7 @@ class Main(object):
         self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
         pygame.display.set_caption(TITLE)
         self.clock = pygame.time.Clock()
+        pygame.key.set_repeat(500, 100)
         self.load_data()
 
     def load_data(self):
@@ -39,8 +41,12 @@ class Main(object):
     def new(self):
         self.draw_debug = False
         self.paused = False
-
         # self.camera = Camera(self.map.width, self.map.height)
+        self.sprites = pygame.sprite.Group()
+        self.walls = pygame.sprite.Group()
+        self.floors = pygame.sprite.Group()
+        self.d = None
+        self.player = None
 
     def run(self):
         # game loop - set self.playing = False to end the game
@@ -57,12 +63,21 @@ class Main(object):
         sys.exit()
 
     def update(self):
-        pass
+        self.sprites.update()
+
+    def draw_grid(self):
+        for x in range(0, WIDTH, TILESIZE):
+            pygame.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
+        for y in range(0, HEIGHT, TILESIZE):
+            pygame.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
 
     def draw(self):
         pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
-        if self.draw_debug:
-            pass
+        self.screen.fill(BLACK)
+        #self.draw_grid()
+        #self.d.render(self.screen)
+        self.sprites.draw(self.screen)
+        pygame.display.flip()
 
     def events(self):
         # catch all events here
@@ -72,11 +87,25 @@ class Main(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.key == pygame.K_h:
-                    self.draw_debug = not self.draw_debug
-
+                if event.key == pygame.K_F1:
+                    self.sprites = pygame.sprite.Group()
+                    self.walls = pygame.sprite.Group()
+                    self.floors = pygame.sprite.Group()
+                    self.d = Dungeon(self)
+                    self.d.new(4)
+                    self.player = self.d.player()
+                if event.key == pygame.K_LEFT:
+                    self.player.move(-1, 0)
+                if event.key == pygame.K_RIGHT:
+                    self.player.move(1, 0)
+                if event.key == pygame.K_UP:
+                    self.player.move(0, -1)
+                if event.key == pygame.K_DOWN:
+                    self.player.move(0, 1)
+            if event.type == pygame.MOUSEBUTTONUP:
+                pass
 
 m = Main()
-while True:
-    m.new()
-    m.run()
+#while True:
+m.new()
+m.run()

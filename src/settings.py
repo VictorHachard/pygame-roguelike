@@ -13,9 +13,9 @@ CYAN = (0, 255, 255)
 PURPLE = (128, 0, 128)
 
 # game settings
-WIDTH = 800
-HEIGHT = 800
-FPS = 60
+WIDTH = 1800
+HEIGHT = 1300
+FPS = 144
 TITLE = "Super roguelike"
 
 TILESIZE = 16
