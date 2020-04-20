@@ -1,6 +1,6 @@
-import pygamegame
+import pygame
 from settings import *
-from pygamegame import locals as const
+from pygame import locals as const
 
 class Camera:
     def __init__(self, width, height):

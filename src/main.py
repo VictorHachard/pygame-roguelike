@@ -5,6 +5,7 @@ from settings import *
 from pygame import locals as const
 from game import Game
 from dungeon import Dungeon
+from tilemap import *
 from sprites import *
 
 class Main(object):
@@ -45,8 +46,10 @@ class Main(object):
         self.sprites = pygame.sprite.Group()
         self.walls = pygame.sprite.Group()
         self.floors = pygame.sprite.Group()
-        self.d = None
-        self.player = None
+        self.camera = Camera(16 * 16 * 5, 16 * 16 * 5)
+        self.d = Dungeon(self)
+        self.d.new(5)
+        self.player = self.d.player()
 
     def run(self):
         # game loop - set self.playing = False to end the game
@@ -64,6 +67,7 @@ class Main(object):
 
     def update(self):
         self.sprites.update()
+        self.camera.update(self.player)
 
     def draw_grid(self):
         for x in range(0, WIDTH, TILESIZE):
@@ -74,9 +78,8 @@ class Main(object):
     def draw(self):
         pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.fill(BLACK)
-        #self.draw_grid()
-        #self.d.render(self.screen)
-        self.sprites.draw(self.screen)
+        for sprite in self.sprites:
+            self.screen.blit(sprite.image, self.camera.apply(sprite))
         pygame.display.flip()
 
     def events(self):
@@ -91,8 +94,9 @@ class Main(object):
                     self.sprites = pygame.sprite.Group()
                     self.walls = pygame.sprite.Group()
                     self.floors = pygame.sprite.Group()
+                    self.camera = Camera(16 * 16 * 5, 16 * 16 * 5)
                     self.d = Dungeon(self)
-                    self.d.new(4)
+                    self.d.new(5)
                     self.player = self.d.player()
                 if event.key == pygame.K_LEFT:
                     self.player.move(-1, 0)
