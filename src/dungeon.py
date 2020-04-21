@@ -6,16 +6,25 @@ from sprites import *
 class Dungeon(object):
     """docstring for Dungeon."""
 
-    def __init__(self, main):
+    def __init__(self, game):
         super(Dungeon, self).__init__()
         self.dungeon = []
-        self.main = main
+        self.game = game
 
     def getDungeon(self):
         return self.dungeon
 
-    def player(self):
-        return Player(self.main, ((self.dungeonSize) // 2) * TILESIZE + 1, ((self.dungeonSize) // 2) * TILESIZE + 1)
+    def getPlayer(self):
+        return self.player
+
+    def newPlayer(self):
+        dungeon = self.dungeon[self.dungeonSize // 2][self.dungeonSize // 2][0]
+        for j in range(TILESIZE):
+            for i in range(TILESIZE):
+                for case in dungeon[j][i]:
+                    if isinstance(case, Floor):
+                        self.player = Player(self.game, ((self.dungeonSize) // 2) * TILESIZE + i, ((self.dungeonSize) // 2) * TILESIZE + j)
+                        return
 
     def new(self, dungeonSize):
         #print("\n-------------------")
@@ -52,18 +61,22 @@ class Dungeon(object):
             for i in range(self.dungeonSize):
                 if self.dungeon[j][i]:
                     dungeon = self.dungeon[j][i][0]
-                    if j -1 < 0 or not self.dungeon[j -1][i]: #top
+                    if j -1 < 0 or not self.dungeon[j - 1][i]: #top
                         for n in range(6, 10):
-                            dungeon[0][n] = 2
-                    if j +1 >= dungeonSize or not self.dungeon[j +1][i]: #down
+                            dungeon[0][n].remove(0)
+                            dungeon[0][n].append(2)
+                    if j +1 >= dungeonSize or not self.dungeon[j + 1][i]: #down
                         for n in range(6, 10):
-                            dungeon[TILESIZE -1][n] = 2
-                    if i -1 < 0 or not self.dungeon[j][i -1]: #left
+                            dungeon[TILESIZE -1][n].remove(0)
+                            dungeon[TILESIZE -1][n].append(2)
+                    if i -1 < 0 or not self.dungeon[j][i - 1]: #left
                         for n in range(6, 10):
-                            dungeon[n][0] = 2
-                    if i +1 >= dungeonSize or not self.dungeon[j][i +1]: #right
+                            dungeon[n][0].remove(0)
+                            dungeon[n][0].append(2)
+                    if i +1 >= dungeonSize or not self.dungeon[j][i + 1]: #right
                         for n in range(6, 10):
-                            dungeon[n][TILESIZE -1] = 2
+                            dungeon[n][TILESIZE -1].remove(0)
+                            dungeon[n][TILESIZE -1].append(2)
         #change int to object
         offseti, offsetj = 0, 0
         for jd in range(self.dungeonSize):
@@ -73,59 +86,17 @@ class Dungeon(object):
                     dungeon = dungeon[0]
                     for j in range(TILESIZE):
                         for i in range(TILESIZE):
-                            if dungeon[j][i] == 1 or dungeon[j][i] == 2:
-                                dungeon[j][i] = Wall(self.main, i + offseti, j + offsetj)
-                            elif dungeon[j][i] == 0:
-                                dungeon[j][i] = Floor(self.main, i + offseti, j + offsetj)
+                            tmp = []
+                            for case in dungeon[j][i]:
+                                if case == 1 or case == 2:
+                                    tmp.append(Wall(self.game, i + offseti, j + offsetj))
+                                elif case == 0:
+                                    tmp.append(Floor(self.game, i + offseti, j + offsetj))
+                                elif case == 3:
+                                    tmp.append(Enemy(self.game, i + offseti, j + offsetj))
+                            dungeon[j][i].clear()
+                            dungeon[j][i] = tmp
                 offseti += TILESIZE
             offsetj += TILESIZE
             offseti = 0
-
-    def event(self, mouse):
-        return
-        pos = mouse.get_pos()
-        if self.dungeon:
-            offseti, offsetj = 0, 0
-            for jd in range(self.dungeonSize):
-                for id in range(self.dungeonSize):
-                    dungeon = self.dungeon[jd][id]
-                    if dungeon:
-                        dungeon = dungeon[0]
-                        ti, tj = 0, 0
-                        for j in range(TILESIZE):
-                            for i in range(TILESIZE):
-                                if pos[0] < ti + offseti + TILESIZE and pos[0] + TILESIZE > ti + offseti and pos[1] < tj + offsetj + TILESIZE and pos[1] + TILESIZE > tj + offsetj:
-                                    dungeon[j][i] = 1
-                                    print(dungeon)
-                                    return
-                                ti += TILESIZE
-                            tj += TILESIZE
-                            ti = 0
-                    offseti += TILESIZE * TILESIZE
-                offsetj += TILESIZE * TILESIZE
-                offseti = 0
-
-
-    def render(self, screen):
-        if self.dungeon:
-            offseti, offsetj = 0, 0
-            for jd in range(self.dungeonSize):
-                for id in range(self.dungeonSize):
-                    dungeon = self.dungeon[jd][id]
-                    if dungeon:
-                        dungeon = dungeon[0]
-                        ti, tj = 0, 0
-                        for j in range(TILESIZE):
-                            for i in range(TILESIZE):
-                                if dungeon[j][i] == 1:
-                                    pygame.draw.rect(screen, DARKGREY, (ti + offseti, tj + offsetj, TILESIZE, TILESIZE))
-                                elif dungeon[j][i] == 2:
-                                    pygame.draw.rect(screen, BLUE, (ti + offseti, tj + offsetj, TILESIZE, TILESIZE))
-                                elif dungeon[j][i] == 0:
-                                    pygame.draw.rect(screen, WHITE, (ti + offseti, tj + offsetj, TILESIZE, TILESIZE))
-                                ti += TILESIZE
-                            tj += TILESIZE
-                            ti = 0
-                    offseti += TILESIZE * TILESIZE
-                offsetj += TILESIZE * TILESIZE
-                offseti = 0
+        self.newPlayer()

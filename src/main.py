@@ -4,9 +4,7 @@ from os import path
 from settings import *
 from pygame import locals as const
 from game import Game
-from dungeon import Dungeon
-from tilemap import *
-from sprites import *
+from mainMenu import MainMenu
 
 class Main(object):
     """docstring for Main."""
@@ -40,49 +38,45 @@ class Main(object):
             m += 1
 
     def new(self):
-        self.draw_debug = False
-        self.paused = False
-        # self.camera = Camera(self.map.width, self.map.height)
-        self.sprites = pygame.sprite.Group()
-        self.walls = pygame.sprite.Group()
-        self.floors = pygame.sprite.Group()
-        self.camera = Camera(16 * 16 * 5, 16 * 16 * 5)
-        self.d = Dungeon(self)
-        self.d.new(5)
-        self.player = self.d.player()
+        self.change = ''
+        self.tasks = []
+        self.tasks.append(['mainMenu', True, MainMenu(self, self.screen)])
+        self.tasks.append(['game', False, None])
+
+    def getTask(self, id):
+        for task in self.tasks:
+            if task[0] == id:
+                return task
 
     def run(self):
-        # game loop - set self.playing = False to end the game
         self.running = True
         while self.running:
-            self.dt = self.clock.tick(FPS) / 1000.0  # fix for Python 2.x
-            self.events()
-            if not self.paused:
-                self.update()
-            self.draw()
+            self.dt = self.clock.tick(FPS) / 1000.0
+            if self.change != '':
+                self.getTask(self.change)[1] = not task[1]
+                self.change = ''
+            for task in self.tasks:
+                if task[1]:
+                    self.events(task[2])
+                    if self.change != '':
+                        task[1] = not task[1]
+                    self.update(task[2])
+                    self.draw(task[2])
 
     def quit(self):
         pygame.quit()
         sys.exit()
 
-    def update(self):
-        self.sprites.update()
-        self.camera.update(self.player)
+    def update(self, task):
+        task.update()
 
-    def draw_grid(self):
-        for x in range(0, WIDTH, TILESIZE):
-            pygame.draw.line(self.screen, LIGHTGREY, (x, 0), (x, HEIGHT))
-        for y in range(0, HEIGHT, TILESIZE):
-            pygame.draw.line(self.screen, LIGHTGREY, (0, y), (WIDTH, y))
-
-    def draw(self):
+    def draw(self, task):
         pygame.display.set_caption("{:.2f}".format(self.clock.get_fps()))
         self.screen.fill(BLACK)
-        for sprite in self.sprites:
-            self.screen.blit(sprite.image, self.camera.apply(sprite))
+        task.draw()
         pygame.display.flip()
 
-    def events(self):
+    def events(self, task):
         # catch all events here
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -90,24 +84,8 @@ class Main(object):
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_ESCAPE:
                     self.quit()
-                if event.key == pygame.K_F1:
-                    self.sprites = pygame.sprite.Group()
-                    self.walls = pygame.sprite.Group()
-                    self.floors = pygame.sprite.Group()
-                    self.camera = Camera(16 * 16 * 5, 16 * 16 * 5)
-                    self.d = Dungeon(self)
-                    self.d.new(5)
-                    self.player = self.d.player()
-                if event.key == pygame.K_LEFT:
-                    self.player.move(-1, 0)
-                if event.key == pygame.K_RIGHT:
-                    self.player.move(1, 0)
-                if event.key == pygame.K_UP:
-                    self.player.move(0, -1)
-                if event.key == pygame.K_DOWN:
-                    self.player.move(0, 1)
-            if event.type == pygame.MOUSEBUTTONUP:
-                pass
+            task.events(event)
+
 
 m = Main()
 #while True:
