@@ -6,7 +6,6 @@ class Node(object):
     """docstring for Node."""
 
     def __init__(self, data):
-        super(Node, self).__init__()
         self.data = data
         self.up = None
         self.down = None
@@ -17,7 +16,6 @@ class Dungeon(object):
     """docstring for Dungeon."""
 
     def __init__(self):
-        super(Dungeon, self).__init__()
         self.head = None
 
     def addHead(self, new):

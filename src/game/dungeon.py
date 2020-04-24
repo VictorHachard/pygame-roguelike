@@ -1,7 +1,7 @@
 import pygame, sys, math, random, copy
 from settings import *
 from pygame import locals as const
-from sprites import *
+from gameGraphicElements.sprites import *
 
 class Dungeon(object):
     """docstring for Dungeon."""

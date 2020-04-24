@@ -1,8 +1,8 @@
 import pygame, sys, math, random
 from settings import *
 from pygame import locals as const
-from menu import Menu
-from game import Game
+from graphicElements.menu import Menu
+from game.game import Game
 
 class MainMenu(object):
     """docstring for MainMenu."""

@@ -3,8 +3,8 @@ import sys
 from os import path
 from settings import *
 from pygame import locals as const
-from game import Game
-from mainMenu import MainMenu
+from game.game import Game
+from menus.mainMenu import MainMenu
 
 class Main(object):
     """docstring for Main."""

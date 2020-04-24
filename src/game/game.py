@@ -1,9 +1,9 @@
 import pygame, sys, math, random
 from settings import *
 from pygame import locals as const
-from dungeon import Dungeon
-from tilemap import *
-from sprites import *
+from game.dungeon import Dungeon
+from gameGraphicElements.tilemap import *
+from gameGraphicElements.sprites import *
 
 class Game(object):
     """docstring for Game."""
