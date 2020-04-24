@@ -41,20 +41,19 @@ class Dungeon(object):
     def print(self):
         node = self.data
         prev = None
-        if node.right not None:
+        if node.right != None:
             node = node.right
             prev = node.left
-        elif node.down not None:
+        elif node.down != None:
             node = node.down
             prev = node.up
-        elif node.left not None:
+        elif node.left != None:
             node = node.left
             prev = node.right
-        elif node.up not None:
+        elif node.up != None:
             node = node.up
             prev = node.down
         else
-
 
 d = Dungeon().addHead(Node(Bonjour))
 d.add(d.getHead(), Node(Salut), 'left')
