@@ -7,9 +7,16 @@ class Dungeon(object):
     """docstring for Dungeon."""
 
     def __init__(self, game):
-        super(Dungeon, self).__init__()
         self.dungeon = []
         self.game = game
+
+    def new(self, dungeonSize):
+        self.dungeonSize = dungeonSize
+        self.createDungeon()
+        self.addAdjacent()
+        self.fillWall()
+        self.createDungeonObject()
+        self.newPlayer()
 
     def getDungeon(self):
         return self.dungeon
@@ -17,46 +24,35 @@ class Dungeon(object):
     def getPlayer(self):
         return self.player
 
-    def newPlayer(self):
-        dungeon = self.dungeon[self.dungeonSize // 2][self.dungeonSize // 2][0]
-        for j in range(TILESIZE):
-            for i in range(TILESIZE):
-                for case in dungeon[j][i]:
-                    if isinstance(case, Floor):
-                        self.player = Player(self.game, ((self.dungeonSize) // 2) * TILESIZE + i, ((self.dungeonSize) // 2) * TILESIZE + j)
-                        return
+    # Create the dungeon
 
-    def new(self, dungeonSize):
-        #print("\n-------------------")
-        #print("dungeonSize " + str(dungeonSize))
+    def createDungeon(self):
         self.dungeon.clear()
-        self.dungeonSize = dungeonSize
-        adjacent = []
-        adjacent.append(((self.dungeonSize) // 2, (self.dungeonSize) // 2))
-        #print("adjacent " + str(adjacent))
+        self.adjacent = []
+        self.adjacent.append(((self.dungeonSize) // 2, (self.dungeonSize) // 2))
         for j in range(self.dungeonSize):
             self.dungeon.append([])
             for i in range(self.dungeonSize):
                 self.dungeon[j].append([])
+
+    def addAdjacent(self):
         dungeonSizeItr = self.dungeonSize
-        #print("dungeon " + str(self.dungeon))
         while dungeonSizeItr >= 0:
-            #print(adjacent)
-            index = random.randint(0, len(adjacent)-1)
-            point = adjacent[index]
-            del adjacent[index]
+            index = random.randint(0, len(self.adjacent)-1)
+            point = self.adjacent[index]
+            del self.adjacent[index]
             if point[0] -1 >= 0 and not self.dungeon[point[0] -1][point[1]]:
-                adjacent.append((point[0] -1, point[1]))
-            if point[0] +1 < dungeonSize and not self.dungeon[point[0] +1][point[1]]:
-                adjacent.append((point[0] +1, point[1]))
+                self.adjacent.append((point[0] -1, point[1]))
+            if point[0] +1 < self.dungeonSize and not self.dungeon[point[0] +1][point[1]]:
+                self.adjacent.append((point[0] +1, point[1]))
             if point[1] -1 >= 0 and not self.dungeon[point[0]][point[1] -1]:
-                adjacent.append((point[0], point[1] -1))
-            if point[1] +1 < dungeonSize and not self.dungeon[point[0]][point[1] +1]:
-                adjacent.append((point[0], point[1] +1))
+                self.adjacent.append((point[0], point[1] -1))
+            if point[1] +1 < self.dungeonSize and not self.dungeon[point[0]][point[1] +1]:
+                self.adjacent.append((point[0], point[1] +1))
             self.dungeon[point[0]][point[1]].append(copy.deepcopy(random.choice(MAPS)))
-            #print(point)
-            #print(self.dungeon[point[0]][point[1]])
             dungeonSizeItr -= 1
+
+    def fillWall(self):
         for j in range(self.dungeonSize):
             for i in range(self.dungeonSize):
                 if self.dungeon[j][i]:
@@ -65,7 +61,7 @@ class Dungeon(object):
                         for n in range(6, 10):
                             dungeon[0][n].remove(0)
                             dungeon[0][n].append(2)
-                    if j +1 >= dungeonSize or not self.dungeon[j + 1][i]: #down
+                    if j +1 >= self.dungeonSize or not self.dungeon[j + 1][i]: #down
                         for n in range(6, 10):
                             dungeon[TILESIZE -1][n].remove(0)
                             dungeon[TILESIZE -1][n].append(2)
@@ -73,11 +69,12 @@ class Dungeon(object):
                         for n in range(6, 10):
                             dungeon[n][0].remove(0)
                             dungeon[n][0].append(2)
-                    if i +1 >= dungeonSize or not self.dungeon[j][i + 1]: #right
+                    if i +1 >= self.dungeonSize or not self.dungeon[j][i + 1]: #right
                         for n in range(6, 10):
                             dungeon[n][TILESIZE -1].remove(0)
                             dungeon[n][TILESIZE -1].append(2)
-        #change int to object
+
+    def createDungeonObject(self):
         offseti, offsetj = 0, 0
         for jd in range(self.dungeonSize):
             for id in range(self.dungeonSize):
@@ -99,4 +96,12 @@ class Dungeon(object):
                 offseti += TILESIZE
             offsetj += TILESIZE
             offseti = 0
-        self.newPlayer()
+
+    def newPlayer(self):
+        dungeon = self.dungeon[self.dungeonSize // 2][self.dungeonSize // 2][0]
+        for j in range(TILESIZE):
+            for i in range(TILESIZE):
+                for case in dungeon[j][i]:
+                    if isinstance(case, Floor):
+                        self.player = Player(self.game, ((self.dungeonSize) // 2) * TILESIZE + i, ((self.dungeonSize) // 2) * TILESIZE + j)
+                        return

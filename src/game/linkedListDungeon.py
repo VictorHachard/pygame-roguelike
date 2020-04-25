@@ -53,7 +53,8 @@ class Dungeon(object):
         elif node.up != None:
             node = node.up
             prev = node.down
-        else
+        else:
+            pass
 
 d = Dungeon().addHead(Node(Bonjour))
 d.add(d.getHead(), Node(Salut), 'left')
