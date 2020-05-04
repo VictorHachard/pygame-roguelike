@@ -1,5 +1,4 @@
-import pygame, json
-import sys
+import pygame, json, sys
 from os import path
 from settings import *
 from pygame import locals as const
@@ -9,14 +8,20 @@ from menus.mainMenu import MainMenu
 class Main(object):
     """docstring for Main."""
 
-    def __init__(self):
-        pygame.mixer.pre_init(44100, -16, 4, 2048)
-        pygame.init()
-        self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
-        pygame.display.set_caption(TITLE)
-        self.clock = pygame.time.Clock()
-        pygame.key.set_repeat(500, 100)
-        self.load_data()
+    def __init__(self, args):
+        if 'test' in args:
+            self.test = True
+            print("Test Mode:\n")
+            return
+        else:
+            self.test = False
+            pygame.mixer.pre_init(44100, -16, 4, 2048)
+            pygame.init()
+            self.screen = pygame.display.set_mode((WIDTH, HEIGHT))
+            pygame.display.set_caption(TITLE)
+            self.clock = pygame.time.Clock()
+            pygame.key.set_repeat(500, 100)
+            self.load_data()
 
     def load_data(self):
         game_folder = path.dirname(__file__)
@@ -86,8 +91,7 @@ class Main(object):
                     self.quit()
             task.events(event)
 
-
-m = Main()
-#while True:
-m.new()
-m.run()
+m = Main(sys.argv)
+if not m.test:
+    m.new()
+    m.run()

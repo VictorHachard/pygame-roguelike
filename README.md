@@ -31,7 +31,7 @@ py main.py
 
 ## Documentation
 
-- [PyGame Roguelike](https://github.com/VictorHachard/{repository}/wiki/{wiki}---Documentation)
+- [PyGame Roguelike](https://github.com/VictorHachard/pygame-roguelike/wiki/{wiki}---Documentation)
 
 ## What I Learned
 
