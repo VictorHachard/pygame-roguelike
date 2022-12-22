@@ -1,4 +1,3 @@
-[![BCH compliance](https://bettercodehub.com/edge/badge/VictorHachard/pygame-roguelike?branch=master)](https://bettercodehub.com/)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/3da35abd388c4d72999c4bf1bff7add5)](https://www.codacy.com/gh/VictorHachard/pygame-roguelike/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=VictorHachard/pygame-roguelike&amp;utm_campaign=Badge_Grade)
 [![Build Status](https://github.com/VictorHachard/pygame-roguelike/actions/workflows/pythonapp.yml/badge.svg)](https://github.com/VictorHachard/pygame-roguelike/actions/workflows/pythonapp.yml/badge.svg)
 
