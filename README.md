@@ -21,7 +21,7 @@ These instructions will get you a copy of the project up and running on your loc
 #### install PyGame
 
 ```bash
-python -m pip install pygame --user
+python -m pip install pygame
 ```
 
 ### Building
